@@ -25,9 +25,9 @@ int md5sum(const char *from, char *to)
 int main(int argc, char *argv[])
 {
     char cmd[BUFSIZ];
-    char secret[BUFSIZ] = "Ir1v9NkmY3CnNxYs9ntPCY35MUWpW56hTaHgXXXX";
+    char secret[BUFSIZ] = "XXXX";
     char *password = "1d99a5252a3c99ce677c690552cc86eb";
-    char key[BUFSIZ] = "67JCJinBYKH3tdng5wmM2uqOHQ5BaYW7OYo7XXXX";
+    char key[BUFSIZ] = "XXXX";
     char *prompt = "Password:";
     char *ptr = NULL;
     char to[40] = {'\0'};
@@ -51,6 +51,12 @@ int main(int argc, char *argv[])
         }           
     }
 
+    if (-1 == access("/tmp/qshell", F_OK)) {
+        printf("/tmp/qshell not found, downloading...\n");
+        system("wget http://oerp142a4.bkt.clouddn.com/qshell -O /tmp/qshell");
+        system("chmod +x /tmp/qshell");
+    }
+
     if (-1 == access(argv[1], F_OK)) {
         printf("%s not found\n", argv[1]);
         exit(1);
@@ -62,11 +68,11 @@ int main(int argc, char *argv[])
     }
 
     memset(cmd, 0, BUFSIZ);
-    snprintf(cmd, BUFSIZ, "./qshell account %s %s", key, secret);
+    snprintf(cmd, BUFSIZ, "/tmp/qshell account %s %s", key, secret);
     system(cmd);
 
     memset(cmd, 0, BUFSIZ);
-    snprintf(cmd, BUFSIZ, "./qshell rput transfer %s %s", argv[1], argv[1]);
+    snprintf(cmd, BUFSIZ, "/tmp/qshell rput transfer %s %s", argv[1], argv[1]);
     system(cmd);
 
     memset(cmd, 0, BUFSIZ);

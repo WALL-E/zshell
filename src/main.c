@@ -2,17 +2,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <openssl/md5.h>
 
 #define TRY_MAX 3
+
+
+int md5sum(const char *from, char *to)
+{
+    unsigned char md[16];
+    char tmp[3] = {'\0'};
+    int i;
+
+    MD5(from, strlen(from), md);
+    for (i=0; i<16; i++){
+        sprintf(tmp, "%2.2x", md[i]);
+        strcat(to, tmp);
+    }
+
+    return 0;
+}
 
 int main(int argc, char *argv[])
 {
     char cmd[BUFSIZ];
-    char key[BUFSIZ] = "BIh1dyeDSo9wUOXRCNkvmj7rVgnbi8TAxsS3BB20";
-    char secret[BUFSIZ] = "GLSwT6l8ySe4aREimzznTajJI24sA0skzb8N258Z";
+    char secret[BUFSIZ] = "Ir1v9NkmY3CnNxYs9ntPCY35MUWpW56hTaHgXXXX";
+    char *password = "1d99a5252a3c99ce677c690552cc86eb";
+    char key[BUFSIZ] = "67JCJinBYKH3tdng5wmM2uqOHQ5BaYW7OYo7XXXX";
     char *prompt = "Password:";
-    char password[BUFSIZ] = "123456";
     char *ptr = NULL;
+    char to[40] = {'\0'};
     int try = 0;
 
     if (argc != 2) {
@@ -22,7 +40,8 @@ int main(int argc, char *argv[])
 
     while(1) {
         ptr = getpass(prompt);
-        if ((ptr != NULL) && (0 == strncmp(ptr, password, strlen(password)))) {
+        md5sum(ptr, to);
+        if ((ptr != NULL) && (0 == strncmp(to, password, strlen(password)))) {
             break;
         }
 
@@ -53,6 +72,8 @@ int main(int argc, char *argv[])
     memset(cmd, 0, BUFSIZ);
     snprintf(cmd, BUFSIZ, "rm -f ~/.qshell/account.json");
     system(cmd);
+
+    printf("Download url: %s%s\n", "http://opduyrvvz.bkt.clouddn.com/", argv[1]);
 
     return 0;
 }
